@@ -4,15 +4,23 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private ClickCounter _counter;
+    private int _clickCount = 0;
+    private bool _startedGame = false;
+
+    private void HandleClickCounter()
     {
-        
+        if (!_startedGame)
+        {
+            StartGame();
+            return;
+        }
+
+        _clickCount++;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void StartGame()
     {
-        
+        _startedGame = true;
     }
 }
