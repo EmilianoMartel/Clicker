@@ -11,6 +11,7 @@ public class Timer : MonoBehaviour
     private float _currentTime = 60f;
 
     public event Action<float> actualTime;
+    public event Action endTime;
 
     private void OnEnable()
     {
@@ -39,5 +40,6 @@ public class Timer : MonoBehaviour
         }
         _currentTime = 0;
         actualTime?.Invoke(_currentTime);
+        endTime?.Invoke();
     }
 }

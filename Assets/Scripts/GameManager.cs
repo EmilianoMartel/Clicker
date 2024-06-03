@@ -1,26 +1,41 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private ClickCounter _counter;
-    private int _clickCount = 0;
-    private bool _startedGame = false;
+    [SerializeField] private Timer _timer;
+    [SerializeField] private ClickCounter _clicker;
+    [SerializeField] private GameObject _finalPanel;
 
-    private void HandleClickCounter()
+    private SaveData _saveData = new();
+
+    private void OnEnable()
     {
-        if (!_startedGame)
-        {
-            StartGame();
-            return;
-        }
-
-        _clickCount++;
+        _timer.endTime += HandleEndTime;
+        _clicker.finalCount += HandleFinalScore;
     }
 
-    private void StartGame()
+    private void OnDisable()
     {
-        _startedGame = true;
+        _timer.endTime -= HandleEndTime;
+        _clicker.finalCount -= HandleFinalScore;
+    }
+
+    private void Awake()
+    {
+        _saveData.Start();
+    }
+
+    private void HandleEndTime()
+    {
+        _finalPanel.SetActive(true);
+    }
+
+    private void HandleFinalScore(int score)
+    {
+        if (_saveData.NewRecordCheck(score))
+            Debug.Log("sese");
     }
 }

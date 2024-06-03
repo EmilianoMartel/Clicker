@@ -8,7 +8,7 @@ public enum AdType
     Interstitial,
     Rewarded
 }
-
+[CreateAssetMenu(menuName = "Ads Data/Data", fileName = "AdsData")]
 public class AdsData : ScriptableObject
 {
     [SerializeField] private AdType _adType;

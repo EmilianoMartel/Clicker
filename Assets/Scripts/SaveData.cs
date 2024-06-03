@@ -3,55 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class SaveData : MonoBehaviour
+public class SaveData
 {
-    static string playerxp_key = "playerXP";
-    static string inventory_key = "inventory";
+    static string maxClicks_key = "maxClicks";
 
-    private int playerXP = 100;
+    private int maxClicks = 100;
 
-    private List<string> inventario = new List<string>();
-
-    void Start()
+    public void Start()
     {
-        if (PlayerPrefs.HasKey(playerxp_key))
-            playerXP = PlayerPrefs.GetInt(playerxp_key);
+        if (PlayerPrefs.HasKey(maxClicks_key))
+            maxClicks = PlayerPrefs.GetInt(maxClicks_key);
         else
-            playerXP = 0;
-
-        if (PlayerPrefs.HasKey(inventory_key))
-            inventario = ParsearInventario(PlayerPrefs.GetString(inventory_key));
-        else
-            inventario = new List<string>();
+            maxClicks = 0;
     }
 
-    private List<string> ParsearInventario(string inventoryParsed)
+    public bool NewRecordCheck(int value)
     {
-        return inventoryParsed.Split(",").ToList();
-    }
+        if (value < maxClicks)
+            return false;
 
-    void UpdateXP(int value)
-    {
-        playerXP += value;
-
-        PlayerPrefs.SetInt(playerxp_key, playerXP);
+        maxClicks = value;
+        PlayerPrefs.SetInt(maxClicks_key, maxClicks);
         PlayerPrefs.Save();
-    }
-
-    void SaveInventory()
-    {
-        string inventoryParsed = "";
-        foreach (var item in inventario)
-        {
-            inventoryParsed += item + ",";
-        }
-
-        PlayerPrefs.SetString(inventory_key, inventoryParsed);
-        PlayerPrefs.Save();
-    }
-
-    private void ResetearAvance()
-    {
-        PlayerPrefs.DeleteAll();
+        return true;
     }
 }
