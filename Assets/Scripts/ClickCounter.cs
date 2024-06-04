@@ -25,9 +25,18 @@ public class ClickCounter : MonoBehaviour
 
     private void OnDisable()
     {
+
         _clickButton.onClick.RemoveAllListeners();
         _timer.endTime -= HandleEndTime;
     }
+
+#if UNITY_ANDROID || UNITY_IOS
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0) && _isPlaying)
+            AddToCounterClick();
+    }
+#endif
 
     private void Awake()
     {
@@ -47,7 +56,16 @@ public class ClickCounter : MonoBehaviour
             startEvent?.Invoke();
             return;
         }
-        
+
+#if UNITY_ANDROID || UNITY_IOS
+
+#else
+        AddToCounterClick();
+#endif
+    }
+
+    private void AddToCounterClick()
+    {
         _count++;
         actualCount?.Invoke(_count);
     }

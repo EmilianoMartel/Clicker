@@ -6,7 +6,7 @@ using UnityEngine.Advertisements;
 
 public class BannerAd : Ads
 {
-    public void Show()
+    public override void Show()
     {
         BannerLoadOptions options = new BannerLoadOptions
         {
@@ -15,12 +15,12 @@ public class BannerAd : Ads
         };
 
         Advertisement.Banner.SetPosition(BannerPosition.BOTTOM_CENTER);
-        Advertisement.Banner.Load(_data.AdUnitId, options);
+        Advertisement.Banner.Load(p_data.AdUnitId, options);
     }
 
     private void OnBannerLoaded()
     {
-        Advertisement.Banner.Show(_data.AdUnitId);
+        Advertisement.Banner.Show(p_data.AdUnitId);
     }
 
     private void OnBannerError(string message)

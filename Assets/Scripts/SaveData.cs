@@ -5,25 +5,27 @@ using UnityEngine;
 
 public class SaveData
 {
-    static string maxClicks_key = "maxClicks";
+    static string _maxClicks_key = "maxClicks";
 
-    private int maxClicks = 100;
+    private int _maxClicks = 0;
+
+    public int maxClicks { get { return _maxClicks; } }
 
     public void Start()
     {
-        if (PlayerPrefs.HasKey(maxClicks_key))
-            maxClicks = PlayerPrefs.GetInt(maxClicks_key);
+        if (PlayerPrefs.HasKey(_maxClicks_key))
+            _maxClicks = PlayerPrefs.GetInt(_maxClicks_key);
         else
-            maxClicks = 0;
+            _maxClicks = 0;
     }
 
     public bool NewRecordCheck(int value)
     {
-        if (value < maxClicks)
+        if (value < _maxClicks)
             return false;
 
-        maxClicks = value;
-        PlayerPrefs.SetInt(maxClicks_key, maxClicks);
+        _maxClicks = value;
+        PlayerPrefs.SetInt(_maxClicks_key, _maxClicks);
         PlayerPrefs.Save();
         return true;
     }

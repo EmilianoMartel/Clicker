@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Advertisements;
 
-public class RewardedAd : Ads, IUnityAdsLoadListener, IUnityAdsShowListener
+public class InstantiateAd : Ads, IUnityAdsLoadListener, IUnityAdsShowListener
 {
     bool _adLoaded = false;
     public event Action adEnded;
 
     internal void Initialize()
     {
-        Advertisement.Load(_data.AdUnitId, this);
+        Advertisement.Load(p_data.AdUnitId, this);
     }
 
     public void OnUnityAdsAdLoaded(string placementId)
@@ -21,32 +21,33 @@ public class RewardedAd : Ads, IUnityAdsLoadListener, IUnityAdsShowListener
 
     public void OnUnityAdsFailedToLoad(string placementId, UnityAdsLoadError error, string message)
     {
-        Debug.Log($"Rewarded: Error loading Ad Unit: {_data.AdUnitId} - {error.ToString()} - {message}");
+        Debug.Log($"Rewarded: Error loading Ad Unit: {p_data.AdUnitId} - {error.ToString()} - {message}");
     }
 
-    public void ShowInterstitial()
+    public override void Show()
     {
         if (_adLoaded)
-            Advertisement.Show(_data.AdUnitId, this);
+            Advertisement.Show(p_data.AdUnitId, this);
     }
+
     public void OnUnityAdsShowStart(string _adUnitId)
     {
-        Debug.Log($"Showing Ad Unit {_data.AdUnitId}");
+        Debug.Log($"Showing Ad Unit {p_data.AdUnitId}");
     }
 
     public void OnUnityAdsShowClick(string _adUnitId)
     {
-        Debug.Log($"Clicked Ad Unit {_data.AdUnitId}");
+        Debug.Log($"Clicked Ad Unit {p_data.AdUnitId}");
     }
 
     public void OnUnityAdsShowComplete(string _adUnitId, UnityAdsShowCompletionState showCompletionState)
     {
-        Debug.Log($"Ad Unit {_data.AdUnitId} was ended");
+        Debug.Log($"Ad Unit {p_data.AdUnitId} was ended");
         adEnded?.Invoke();
     }
 
     public void OnUnityAdsShowFailure(string placementId, UnityAdsShowError error, string message)
     {
-        Debug.Log($"Error showing Ad Unit {_data.AdUnitId}: {error.ToString()} - {message}");
+        Debug.Log($"Error showing Ad Unit {p_data.AdUnitId}: {error.ToString()} - {message}");
     }
 }
