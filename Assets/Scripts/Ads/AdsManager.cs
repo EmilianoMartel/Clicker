@@ -5,7 +5,6 @@ using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using UnityEngine.Advertisements;
 using UnityEngine.UI;
-using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCounters;
 
 public class AdsManager : MonoBehaviour, IUnityAdsInitializationListener
 {
@@ -16,9 +15,9 @@ public class AdsManager : MonoBehaviour, IUnityAdsInitializationListener
     [SerializeField] private int _adChances = 100;
 
     //Ads
-    private BannerAd _banner = new();
-    private InstantiateAd _interstitial = new();
-    private InstantiateAd _rewarded = new();
+    private BannerAd _bannerAd = new();
+    private InstantiateAd _interstitialAd = new();
+    private InstantiateAd _rewardedAd = new();
 
     private int _currentAdChances;
 
@@ -29,12 +28,14 @@ public class AdsManager : MonoBehaviour, IUnityAdsInitializationListener
     private void OnEnable()
     {
         _manager.startAd += HandleEndGame;
+        _manager.endGame += HandleReactiveRewardButton;
         _rewardButton.onClick.AddListener(HandleStartReward);
     }
 
     private void OnDisable()
     {
         _manager.startAd -= HandleEndGame;
+        _manager.endGame -= HandleReactiveRewardButton;
         _rewardButton.onClick.RemoveListener(HandleStartReward);
     }
 
@@ -46,8 +47,10 @@ public class AdsManager : MonoBehaviour, IUnityAdsInitializationListener
         _gameId = "5629780";
 #elif UNITY_EDITOR
         _gameId = "5629780";
+#else
+        gameObject.SetActive(false);
 #endif
-        
+
         Validate();
 
         if (!Advertisement.isInitialized && Advertisement.isSupported)
@@ -61,7 +64,7 @@ public class AdsManager : MonoBehaviour, IUnityAdsInitializationListener
 
     private void Start()
     {
-        _banner.Show();
+        _bannerAd.Show();
     }
 
     private void DataConverter()
@@ -71,15 +74,15 @@ public class AdsManager : MonoBehaviour, IUnityAdsInitializationListener
             switch (_adsData[i].AdType)
             {
                 case AdType.Banner:
-                    _banner.Data = _adsData[i];
+                    _bannerAd.Data = _adsData[i];
                     break;
                 case AdType.Interstitial:
-                    _interstitial.Data = _adsData[i];
-                    _interstitial.adEnded += HandleEndInterstitial;
+                    _interstitialAd.Data = _adsData[i];
+                    _interstitialAd.adEnded += HandleEndInterstitial;
                     break;
                 case AdType.Rewarded:
-                    _rewarded.Data = _adsData[i];
-                    _rewarded.adEnded += HandleReward;
+                    _rewardedAd.Data = _adsData[i];
+                    _rewardedAd.adEnded += HandleReward;
                     break;
                 default:
                     break;
@@ -114,34 +117,45 @@ public class AdsManager : MonoBehaviour, IUnityAdsInitializationListener
 
     private void HandleStartReward()
     {
-        _rewarded.Show();
+        _rewardedAd.Show();
+        _rewardButton.gameObject.SetActive(false);
     }
 
     private void HandleReward()
     {
         rewardEvent?.Invoke();
+        _rewardedAd.Initialize();
     }
 
     private void HandleEndInterstitial()
     {
         _currentAdChances = _adChances;
+        _interstitialAd.Initialize();
     }
 
     private void HandleEndGame()
     {
         int chance = UnityEngine.Random.Range(0,100);
+
         if (chance < _currentAdChances)
-            _interstitial.Show();
+            _interstitialAd.Show();
         else
             _currentAdChances += 10;
+
+        HandleReactiveRewardButton();
+    }
+
+    private void HandleReactiveRewardButton()
+    {
+        _rewardButton.gameObject.SetActive(true);
     }
 
     public void OnInitializationComplete()
     {
         Debug.Log("Unity Ads initialization complete.");
-        _banner.Show();
-        _interstitial.Initialize();
-        _rewarded.Initialize();
+        _bannerAd.Show();
+        _interstitialAd.Initialize();
+        _rewardedAd.Initialize();
     }
 
     public void OnInitializationFailed(UnityAdsInitializationError error, string message)

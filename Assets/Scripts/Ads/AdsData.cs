@@ -19,6 +19,8 @@ public class AdsData : ScriptableObject
     public string AdUnitId { get { return _iosID; } }
 #elif UNITY_ANDROID
     public string AdUnitId { get { return _androidID; } }
+#else
+    public string AdUnitId = "";
 #endif 
 
     public AdType AdType { get { return _adType;} }

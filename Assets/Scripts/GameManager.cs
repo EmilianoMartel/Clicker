@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     private SaveData _saveData = new();
 
     public event Action startAd;
+    public event Action endGame;
     public event Action<int> maxClicks;
 
     private void OnEnable()
@@ -41,6 +42,7 @@ public class GameManager : MonoBehaviour
         {
             _finalPanel.SetActive(true);
             maxClicks.Invoke(_saveData.maxClicks);
+            endGame?.Invoke();
             return;
         }
 
